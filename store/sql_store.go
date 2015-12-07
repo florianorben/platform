@@ -36,18 +36,19 @@ const (
 )
 
 type SqlStore struct {
-	master     *gorp.DbMap
-	replicas   []*gorp.DbMap
-	team       TeamStore
-	channel    ChannelStore
-	post       PostStore
-	user       UserStore
-	audit      AuditStore
-	session    SessionStore
-	oauth      OAuthStore
-	system     SystemStore
-	webhook    WebhookStore
-	preference PreferenceStore
+	master       *gorp.DbMap
+	replicas     []*gorp.DbMap
+	team         TeamStore
+	channel      ChannelStore
+	post         PostStore
+	user         UserStore
+	audit        AuditStore
+	session      SessionStore
+	oauth        OAuthStore
+	system       SystemStore
+	webhook      WebhookStore
+	preference   PreferenceStore
+	postUserData PostUserDataStore
 }
 
 func NewSqlStore() Store {
@@ -120,6 +121,7 @@ func NewSqlStore() Store {
 	sqlStore.system = NewSqlSystemStore(sqlStore)
 	sqlStore.webhook = NewSqlWebhookStore(sqlStore)
 	sqlStore.preference = NewSqlPreferenceStore(sqlStore)
+	sqlStore.postUserData = NewSqlPostUserDataStore(sqlStore)
 
 	err := sqlStore.master.CreateTablesIfNotExists()
 	if err != nil {
@@ -136,6 +138,7 @@ func NewSqlStore() Store {
 	sqlStore.system.(*SqlSystemStore).UpgradeSchemaIfNeeded()
 	sqlStore.webhook.(*SqlWebhookStore).UpgradeSchemaIfNeeded()
 	sqlStore.preference.(*SqlPreferenceStore).UpgradeSchemaIfNeeded()
+	sqlStore.postUserData.(*SqlPostUserDataStore).UpgradeSchemaIfNeeded()
 
 	sqlStore.team.(*SqlTeamStore).CreateIndexesIfNotExists()
 	sqlStore.channel.(*SqlChannelStore).CreateIndexesIfNotExists()
@@ -147,6 +150,7 @@ func NewSqlStore() Store {
 	sqlStore.system.(*SqlSystemStore).CreateIndexesIfNotExists()
 	sqlStore.webhook.(*SqlWebhookStore).CreateIndexesIfNotExists()
 	sqlStore.preference.(*SqlPreferenceStore).CreateIndexesIfNotExists()
+	sqlStore.postUserData.(*SqlPostUserDataStore).CreateIndexesIfNotExists()
 
 	sqlStore.preference.(*SqlPreferenceStore).DeleteUnusedFeatures()
 
@@ -532,6 +536,10 @@ func (ss SqlStore) Webhook() WebhookStore {
 
 func (ss SqlStore) Preference() PreferenceStore {
 	return ss.preference
+}
+
+func (ss SqlStore) PostUserData() PostUserDataStore {
+	return ss.postUserData
 }
 
 type mattermConverter struct{}

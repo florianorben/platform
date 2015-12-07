@@ -32,6 +32,7 @@ type Post struct {
 	Hashtags      string          `json:"hashtags"`
 	Filenames     StringArray     `json:"filenames"`
 	PendingPostId string          `json:"pending_post_id" db:"-"`
+	Extra         interface{}     `json:"extra" db:"-"`
 }
 
 func (o *Post) ToJson() string {

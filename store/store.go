@@ -38,6 +38,7 @@ type Store interface {
 	System() SystemStore
 	Webhook() WebhookStore
 	Preference() PreferenceStore
+	PostUserData() PostUserDataStore
 	MarkSystemRanUnitTests()
 	Close()
 }
@@ -187,4 +188,15 @@ type PreferenceStore interface {
 	GetAll(userId string) StoreChannel
 	PermanentDeleteByUser(userId string) StoreChannel
 	IsFeatureEnabled(feature, userId string) StoreChannel
+}
+
+type PostUserDataStore interface {
+	Get(id string) StoreChannel
+	GetByPostIds(postIds []string) StoreChannel
+	GetStarredChannels(userId string) StoreChannel
+	GetStarredPosts(userId string) StoreChannel
+	GetReactionsByPostId(postId string) StoreChannel
+	GetPinnedPostsByChannelId(channelId string) StoreChannel
+	Save(postUserData *model.PostUserData) StoreChannel
+	Delete(id string) StoreChannel
 }
